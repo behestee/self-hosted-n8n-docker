@@ -16,6 +16,7 @@ terraform.tfstate.backup
 # Your real variable values — contains your IP address
 # The .example file IS committed; this file is NOT
 terraform.tfvars
+.env
 
 # Crash log
 crash.log

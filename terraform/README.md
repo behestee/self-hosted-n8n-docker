@@ -56,25 +56,6 @@ brew install awscli
 
 Verify: `aws --version`
 
-### 3 — AWS credentials configured
-
-Terraform uses your AWS credentials to create resources. The easiest way to set them up:
-
-```bash
-aws configure
-```
-
-It will ask for four values:
-
-| Prompt | Where to find it |
-|---|---|
-| AWS Access Key ID | AWS Console → IAM → Users → your user → Security credentials → Create access key |
-| AWS Secret Access Key | Shown once when you create the access key — copy it immediately |
-| Default region | Use the same region you will put in `terraform.tfvars` (e.g. `us-east-1`) |
-| Default output format | Type `json` and press Enter |
-
-> Your IAM user needs admin-level permissions (or at minimum: EC2, Lambda, IAM, EventBridge, CloudWatch Logs).
-
 ---
 
 ## Step-by-Step Deployment
@@ -120,7 +101,57 @@ n8n_domain    = "n8n.example.com"     # Your planned n8n subdomain (used as a ta
 
 Save the file. It is listed in `.gitignore` and will not be committed.
 
-### Step 4 — Initialise Terraform
+
+### 4 — AWS credentials configured
+
+Terraform uses your AWS credentials to create resources. The easiest way to set them up:
+
+```bash
+aws configure
+```
+
+It will ask for four values:
+
+| Prompt | Where to find it |
+|---|---|
+| AWS Access Key ID | AWS Console → IAM → Users → your user → Security credentials → Create access key |
+| AWS Secret Access Key | Shown once when you create the access key — copy it immediately |
+| Default region | Use the same region you will put in `terraform.tfvars` (e.g. `us-east-1`) |
+| Default output format | Type `json` and press Enter |
+
+> Your IAM user needs admin-level permissions (or at minimum: EC2, Lambda, IAM, EventBridge, CloudWatch Logs).
+
+Or you can keep this in .env file + direnv (recommended)
+
+Install direnv — it auto-loads a .env file when you cd into a folder.
+
+```bash
+# Install
+brew install direnv        # macOS
+sudo apt install direnv    # Linux
+
+# Add to your shell (~/.zshrc or ~/.bashrc)
+eval "$(direnv hook zsh)"   # or bash
+```
+
+In project folder, create a .env file:
+
+```bash
+cd terraform
+cp .env.example .env
+# terraform/.env change the values with the actual. keep export command at each line and enclose values with inverted commas
+export AWS_ACCESS_KEY_ID="AKIA_PROD..."
+export AWS_SECRET_ACCESS_KEY="secret_prod..."
+export AWS_DEFAULT_REGION="ap-northeast-1"
+export AWS_PROFILE="prod"
+```
+
+Then allow it once per folder:
+```bash
+direnv allow    # now credentials auto-load when you enter this folder
+```
+
+### Step 5 — Initialise Terraform
 
 This downloads the AWS, TLS, local, and archive providers. Only needed once.
 
@@ -134,7 +165,7 @@ You should see:
 Terraform has been successfully initialized!
 ```
 
-### Step 5 — Preview what will be created
+### Step 6 — Preview what will be created
 
 ```bash
 terraform plan
@@ -142,7 +173,7 @@ terraform plan
 
 Terraform prints every resource it will create. Read through it and confirm it looks right. Nothing is created yet at this stage.
 
-### Step 6 — Apply (create everything)
+### Step 7 — Apply (create everything)
 
 ```bash
 terraform apply
