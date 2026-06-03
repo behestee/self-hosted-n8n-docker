@@ -51,7 +51,7 @@ placeholder_check() {
        || "$val" == *"example"* || "$val" == "your@email.com" ]]; then
         warn "$name still contains a placeholder value — did you forget to edit .env?"
     fi
-
+}
 
 need POSTGRES_PASSWORD;          placeholder_check POSTGRES_PASSWORD
 need POSTGRES_NON_ROOT_PASSWORD; placeholder_check POSTGRES_NON_ROOT_PASSWORD
