@@ -87,6 +87,7 @@ Copy the IP address shown (e.g. `203.0.113.42`). You will need it in the next st
 
 ```bash
 # Run this from the terraform/ directory
+cd terraform
 cp terraform.tfvars.example terraform.tfvars
 ```
 
@@ -131,7 +132,8 @@ brew install direnv        # macOS
 sudo apt install direnv    # Linux
 
 # Add to your shell (~/.zshrc or ~/.bashrc)
-eval "$(direnv hook zsh)"   # or bash
+eval "$(direnv hook bash)"   # or zsh
+source ~/.bashrc
 ```
 
 In project folder, create a .env file:
@@ -142,13 +144,13 @@ cp .env.example .env
 # terraform/.env change the values with the actual. keep export command at each line and enclose values with inverted commas
 export AWS_ACCESS_KEY_ID="AKIA_PROD..."
 export AWS_SECRET_ACCESS_KEY="secret_prod..."
-export AWS_DEFAULT_REGION="ap-northeast-1"
-export AWS_PROFILE="prod"
+export AWS_DEFAULT_REGION="us-east-1"
 ```
 
 Then allow it once per folder:
 ```bash
 direnv allow    # now credentials auto-load when you enter this folder
+aws sts get-caller-identity # To check loaded credentials with aws
 ```
 
 ### Step 5 — Initialise Terraform
@@ -243,13 +245,11 @@ Everything n8n needs — Docker Compose config, Nginx config, systemd service, a
 sudo dnf install -y git
 
 # Clone the repository into ~/n8n
-git clone https://github.com/YOUR_USERNAME/YOUR_REPO.git ~/n8n
+git clone -b terraform https://github.com/behestee/self-hosted-n8n-docker.git ~/n8n
 
 # Enter the project directory — all following commands run from here
 cd ~/n8n
 ```
-
-Replace `YOUR_USERNAME/YOUR_REPO` with the actual GitHub path of this repository.
 
 #### Configure your environment file
 
@@ -258,7 +258,7 @@ Replace `YOUR_USERNAME/YOUR_REPO` with the actual GitHub path of this repository
 cp .env.example .env
 
 # Open it with the nano editor
-nano .env
+vi .env
 ```
 
 Fill in every value in the file. The key ones are:
@@ -274,7 +274,7 @@ Fill in every value in the file. The key ones are:
 | `SETUP_SSL_EMAIL` | Your email — Let's Encrypt sends renewal alerts here |
 | `SETUP_INSTALL_DIR` | Leave as `/home/ec2-user/n8n` unless you cloned to a different path |
 
-Save and exit: `Ctrl + X` → `Y` → `Enter`.
+Save and exit: `ESC` → `:` → `wq` → `Enter`.
 
 > **Encryption key is critical.** Once n8n is running and you save credentials, this key is used to encrypt them. If you ever change it, all saved credentials become unreadable. Back it up in a password manager.
 

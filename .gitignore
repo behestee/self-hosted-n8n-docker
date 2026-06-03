@@ -8,11 +8,6 @@ lambda.zip
 .terraform/
 .terraform.lock.hcl
 
-# State files — contain ALL resource details including sensitive values
-# Store these in an S3 backend for team use; never commit to git
-terraform.tfstate
-terraform.tfstate.backup
-
 # Your real variable values — contains your IP address
 # The .example file IS committed; this file is NOT
 terraform.tfvars

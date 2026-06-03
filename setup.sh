@@ -48,10 +48,10 @@ placeholder_check() {
     local name="$1"
     local val="${!name:-}"
     if [[ "$val" == "changePassword" || "$val" == "WSVjL2Kxlfpavh7F+HRiLy7MDwrYXUMZIpUyB+4c6bQ=" \
-       || "$val" == *"techzenicsolutions"* || "$val" == "your@email.com" ]]; then
+       || "$val" == *"example"* || "$val" == "your@email.com" ]]; then
         warn "$name still contains a placeholder value — did you forget to edit .env?"
     fi
-}
+
 
 need POSTGRES_PASSWORD;          placeholder_check POSTGRES_PASSWORD
 need POSTGRES_NON_ROOT_PASSWORD; placeholder_check POSTGRES_NON_ROOT_PASSWORD
@@ -82,7 +82,7 @@ step "Step 1 — Prepare the Operating System"
 sudo dnf update -y
 ok "System packages updated"
 
-sudo dnf install -y git curl wget unzip htop
+sudo dnf install -y wget unzip htop
 ok "Essential tools installed"
 
 sudo timedatectl set-timezone "$TIMEZONE"
