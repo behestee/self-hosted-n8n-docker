@@ -1,0 +1,40 @@
+[Unit]
+Description=n8n Workflow Automation (Docker Compose)
+Documentation=https://docs.n8n.io
+# Start only after Docker is fully running and the network is online
+After=docker.service network-online.target
+Wants=network-online.target
+Requires=docker.service
+
+[Service]
+Type=oneshot
+# Keep the service "active" even after ExecStart finishes
+# (the containers run in the background — this is correct behaviour)
+RemainAfterExit=yes
+
+# --- Change this path if you cloned the repo to a different location ---
+WorkingDirectory=/home/ec2-user/n8n
+
+# Pull latest images and bring all containers up on start
+ExecStart=/usr/bin/docker compose up -d --remove-orphans
+
+# Gracefully stop all containers on service stop / server shutdown
+ExecStop=/usr/bin/docker compose down
+
+# Pull fresh images and recreate containers on reload (optional, use with care)
+ExecReload=/usr/bin/docker compose pull
+ExecReload=/usr/bin/docker compose up -d --remove-orphans
+
+# Give containers up to 5 minutes to start before systemd gives up
+TimeoutStartSec=300
+
+# Give containers up to 2 minutes to shut down gracefully
+TimeoutStopSec=120
+
+# If the service crashes unexpectedly, wait 10 seconds then try again
+Restart=on-failure
+RestartSec=10s
+
+[Install]
+# Start this service when the server reaches the normal multi-user state
+WantedBy=multi-user.target
