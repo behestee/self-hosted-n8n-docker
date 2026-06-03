@@ -55,7 +55,7 @@ placeholder_check() {
 
 need POSTGRES_PASSWORD;          placeholder_check POSTGRES_PASSWORD
 need POSTGRES_NON_ROOT_PASSWORD; placeholder_check POSTGRES_NON_ROOT_PASSWORD
-need N8N_ENCRYPTION_KEY;         placeholder_check N8N_ENCRYPTION_KEY
+need ENCRYPTION_KEY;             placeholder_check ENCRYPTION_KEY
 need N8N_HOST;                   placeholder_check N8N_HOST
 need WEBHOOK_URL
 need SETUP_SSL_EMAIL;            placeholder_check SETUP_SSL_EMAIL
