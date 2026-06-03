@@ -1,12 +1,43 @@
 # Self-Hosted n8n on AWS EC2 — Complete Setup Guide
 
-This guide walks you through every step needed to run n8n on your own server — from creating the EC2 instance all the way to a secure, SSL-protected domain. No prior server experience is assumed.
+This guide covers everything needed to run n8n on your own AWS server — from creating the EC2 instance all the way to a secure, SSL-protected domain. No prior server experience is assumed.
 
-> **Want Terraform to provision all AWS infrastructure for you?**
-> See [terraform/README.md](terraform/README.md) — one `terraform apply` creates the EC2 instance, Elastic IP, security group, SSH key pair, Lambda scheduler, and all EventBridge rules.
+---
 
-> **Want to save money by auto-stopping the server on a schedule?**
-> See [SCHEDULER.md](SCHEDULER.md) — tag your instance with a schedule name (e.g. `business-hours`) and it starts/stops itself automatically.
+## Before You Start — Choose Your Path
+
+There are two ways to follow this guide. Pick the one that fits you:
+
+---
+
+### Path A — Fully Automated with Terraform (Recommended)
+
+Terraform provisions **all AWS infrastructure** with one command — EC2 instance, Elastic IP, security group, SSH key pair, Lambda scheduler, and all EventBridge rules. You then SSH in, fill in one config file, and run a single setup script that handles the rest.
+
+**Total manual steps: ~5**
+
+1. Fill in `terraform/terraform.tfvars`
+2. Run `terraform apply`
+3. Point your DNS A record to the output IP
+4. SSH in, fill in `.env`, run `bash setup.sh`
+5. (Optional) Tag the instance with a schedule name
+
+→ **Start here: [terraform/README.md](terraform/README.md)**
+
+---
+
+### Path B — Manual Step by Step
+
+Follow this guide from top to bottom. You create each AWS resource through the AWS Console and configure the server manually. Better if you want to understand exactly how everything works or if you prefer not to install Terraform.
+
+**Total manual steps: ~60 (spread across 16 sections)**
+
+→ **Continue to the Table of Contents below**
+
+---
+
+> **Want to auto-stop the server on a schedule to save money?**
+> Either path supports it — see [SCHEDULER.md](SCHEDULER.md). Tag your instance with a schedule name (e.g. `business-hours`) and it starts and stops itself automatically. A `t3.medium` on a business-hours schedule costs ~$8/month instead of ~$30/month.
 
 ---
 
@@ -710,9 +741,10 @@ sudo reboot
 ```
 .
 ├── docker-compose.yml          # Defines all services (n8n, postgres, redis, worker)
-├── .env.example                # Template for your .env file — copy and fill in
+├── .env.example                # Template — copy to .env and fill in before running setup.sh
 ├── .env                        # Your actual secrets — never commit this file
 ├── init-data.sh                # Creates the non-root Postgres user on first run
+├── setup.sh                    # Automated setup script — runs Steps 7–15 from .env values
 ├── nginx/
 │   └── n8n.conf                # Nginx reverse proxy config with security headers
 ├── systemd/

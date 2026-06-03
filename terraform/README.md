@@ -79,7 +79,20 @@ It will ask for four values:
 
 ## Step-by-Step Deployment
 
-### Step 1 — Find your public IP
+### Step 1 — Clone This Repository
+
+```bash
+# Move to the home directory
+cd ~
+
+# Clone the repository
+git clone -b terraform https://github.com/behestee/self-hosted-n8n-docker.git n8n_terraform
+
+# Enter the project folder
+cd n8n_terraform
+```
+
+### Step 2 — Find your public IP
 
 Terraform locks SSH access to your IP only. Open a browser and visit:
 
@@ -89,7 +102,7 @@ https://checkip.amazonaws.com
 
 Copy the IP address shown (e.g. `203.0.113.42`). You will need it in the next step.
 
-### Step 2 — Create your variables file
+### Step 3 — Create your variables file
 
 ```bash
 # Run this from the terraform/ directory
@@ -107,7 +120,7 @@ n8n_domain    = "n8n.example.com"     # Your planned n8n subdomain (used as a ta
 
 Save the file. It is listed in `.gitignore` and will not be committed.
 
-### Step 3 — Initialise Terraform
+### Step 4 — Initialise Terraform
 
 This downloads the AWS, TLS, local, and archive providers. Only needed once.
 
@@ -121,7 +134,7 @@ You should see:
 Terraform has been successfully initialized!
 ```
 
-### Step 4 — Preview what will be created
+### Step 5 — Preview what will be created
 
 ```bash
 terraform plan
@@ -129,7 +142,7 @@ terraform plan
 
 Terraform prints every resource it will create. Read through it and confirm it looks right. Nothing is created yet at this stage.
 
-### Step 5 — Apply (create everything)
+### Step 6 — Apply (create everything)
 
 ```bash
 terraform apply
@@ -190,13 +203,63 @@ ssh -i terraform/n8n-key.pem ec2-user@YOUR_ELASTIC_IP
 
 > The key file (`terraform/n8n-key.pem`) was created in the `terraform/` folder of this repo by Terraform. The `chmod 400` permission was set automatically.
 
-### 3 — Install n8n
+### 3 — Clone this repository onto the server
 
-Follow **Steps 7 through 15** of [README.md](../README.md) to install Docker, clone this repo, configure n8n, set up Nginx, and install SSL.
+Everything n8n needs — Docker Compose config, Nginx config, systemd service, and setup script — lives in this repository. Clone it now from inside your SSH session:
 
-Terraform handles all the AWS infrastructure. The n8n application setup is done once on the server via SSH.
+```bash
+# Install git (not pre-installed on Amazon Linux 2023)
+sudo dnf install -y git
 
-### 4 — Tag the server with a schedule (optional)
+# Clone the repository into ~/n8n
+git clone https://github.com/YOUR_USERNAME/YOUR_REPO.git ~/n8n
+
+# Enter the project directory — all following commands run from here
+cd ~/n8n
+```
+
+Replace `YOUR_USERNAME/YOUR_REPO` with the actual GitHub path of this repository.
+
+#### Configure your environment file
+
+```bash
+# Create your .env from the template
+cp .env.example .env
+
+# Open it with the nano editor
+nano .env
+```
+
+Fill in every value in the file. The key ones are:
+
+| Variable | What to set |
+|---|---|
+| `POSTGRES_PASSWORD` | A strong password — 20+ random characters |
+| `POSTGRES_NON_ROOT_PASSWORD` | A different strong password |
+| `N8N_ENCRYPTION_KEY` | Run `openssl rand -base64 32` and paste the output |
+| `N8N_HOST` | Your n8n subdomain, e.g. `n8n.example.com` |
+| `WEBHOOK_URL` | `https://n8n.example.com/` — same domain with `https://` and a trailing slash |
+| `SETUP_TIMEZONE` | Your server timezone, e.g. `America/New_York` or `UTC` |
+| `SETUP_SSL_EMAIL` | Your email — Let's Encrypt sends renewal alerts here |
+| `SETUP_INSTALL_DIR` | Leave as `/home/ec2-user/n8n` unless you cloned to a different path |
+
+Save and exit: `Ctrl + X` → `Y` → `Enter`.
+
+> **Encryption key is critical.** Once n8n is running and you save credentials, this key is used to encrypt them. If you ever change it, all saved credentials become unreadable. Back it up in a password manager.
+
+### 4 — Install n8n
+
+With the repo cloned and `.env` filled in, run the setup script to complete the entire server setup automatically — OS prep, Docker, n8n, Nginx, SSL, and the auto-start service:
+
+```bash
+bash setup.sh
+```
+
+The script reads all values from your `.env` file and handles Steps 7–15 from [README.md](../README.md) without any further manual input. It prints a progress header for each step and stops immediately if anything fails.
+
+> If you prefer to follow each step manually instead, see **Steps 7–15** of [README.md](../README.md).
+
+### 5 — Tag the server with a schedule (optional)
 
 If you want the server to start and stop automatically, run the command from the `tag_this_instance` output (or go to EC2 → Instances → Tags tab in the AWS Console):
 
