@@ -1,0 +1,21 @@
+# Private SSH key — NEVER commit this
+n8n-key.pem
+
+# Auto-generated Lambda zip — rebuilt by Terraform at plan time
+lambda.zip
+
+# Terraform working directory — downloaded providers and modules
+.terraform/
+.terraform.lock.hcl
+
+# State files — contain ALL resource details including sensitive values
+# Store these in an S3 backend for team use; never commit to git
+terraform.tfstate
+terraform.tfstate.backup
+
+# Your real variable values — contains your IP address
+# The .example file IS committed; this file is NOT
+terraform.tfvars
+
+# Crash log
+crash.log

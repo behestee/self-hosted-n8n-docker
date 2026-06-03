@@ -2,6 +2,12 @@
 
 This guide walks you through every step needed to run n8n on your own server — from creating the EC2 instance all the way to a secure, SSL-protected domain. No prior server experience is assumed.
 
+> **Want Terraform to provision all AWS infrastructure for you?**
+> See [terraform/README.md](terraform/README.md) — one `terraform apply` creates the EC2 instance, Elastic IP, security group, SSH key pair, Lambda scheduler, and all EventBridge rules.
+
+> **Want to save money by auto-stopping the server on a schedule?**
+> See [SCHEDULER.md](SCHEDULER.md) — tag your instance with a schedule name (e.g. `business-hours`) and it starts/stops itself automatically.
+
 ---
 
 ## Table of Contents
@@ -695,6 +701,7 @@ sudo reboot
 - [ ] Change default n8n admin password after first login
 - [ ] Keep Docker images updated regularly (`docker compose pull`)
 - [ ] Review AWS security group rules periodically
+- [ ] Set up scheduled auto start/stop to reduce cost and attack surface (see [SCHEDULER.md](SCHEDULER.md))
 
 ---
 
@@ -702,13 +709,25 @@ sudo reboot
 
 ```
 .
-├── docker-compose.yml     # Defines all services (n8n, postgres, redis, worker)
-├── .env.example           # Template for your .env file — copy and fill in
-├── .env                   # Your actual secrets — never commit this file
-├── init-data.sh           # Creates the non-root Postgres user on first run
+├── docker-compose.yml          # Defines all services (n8n, postgres, redis, worker)
+├── .env.example                # Template for your .env file — copy and fill in
+├── .env                        # Your actual secrets — never commit this file
+├── init-data.sh                # Creates the non-root Postgres user on first run
 ├── nginx/
-│   └── n8n.conf           # Nginx reverse proxy config with security headers
+│   └── n8n.conf                # Nginx reverse proxy config with security headers
 ├── systemd/
-│   └── n8n.service        # systemd unit file — auto-starts n8n on server reboot
-└── README.md              # This guide
+│   └── n8n.service             # systemd unit file — auto-starts n8n on server reboot
+├── terraform/
+│   ├── versions.tf             # Terraform and provider version requirements
+│   ├── variables.tf            # All input variables (region, instance type, schedules)
+│   ├── data.tf                 # Data sources: latest AL2023 AMI, default VPC/subnets
+│   ├── ec2.tf                  # SSH key pair, security group, EC2 instance, Elastic IP
+│   ├── iam.tf                  # IAM roles for Lambda and EventBridge
+│   ├── scheduler.tf            # Lambda function and EventBridge start/stop schedules
+│   ├── outputs.tf              # Output values: IP, SSH command, schedule names
+│   ├── lambda_function.py      # Python source for the EC2 scheduler Lambda
+│   ├── terraform.tfvars.example# Copy to terraform.tfvars and fill in your values
+│   └── README.md               # Step-by-step Terraform deployment guide
+├── SCHEDULER.md                # Scheduling concept, schedule table, and tag reference
+└── README.md                   # This guide
 ```
