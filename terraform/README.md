@@ -67,7 +67,7 @@ Verify: `aws --version`
 cd ~
 
 # Clone the repository
-git clone -b terraform https://github.com/behestee/self-hosted-n8n-docker.git n8n_terraform
+git clone https://github.com/behestee/self-hosted-n8n-docker.git n8n_terraform
 
 # Enter the project folder
 cd n8n_terraform
@@ -245,7 +245,7 @@ Everything n8n needs — Docker Compose config, Nginx config, systemd service, a
 sudo dnf install -y git
 
 # Clone the repository into ~/n8n
-git clone -b terraform https://github.com/behestee/self-hosted-n8n-docker.git ~/n8n
+git clone https://github.com/behestee/self-hosted-n8n-docker.git ~/n8n
 
 # Enter the project directory — all following commands run from here
 cd ~/n8n
