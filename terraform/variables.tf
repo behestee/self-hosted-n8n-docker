@@ -44,32 +44,32 @@ variable "schedules" {
     "business-hours" = {
       start_cron = "cron(0 9 ? * MON-FRI *)"   # 09:00 Mon–Fri
       stop_cron  = "cron(0 18 ? * MON-FRI *)"  # 18:00 Mon–Fri
-      timezone   = "UTC"
+      timezone   = "BST"
     }
     "dev-hours" = {
       start_cron = "cron(0 8 ? * MON-FRI *)"   # 08:00 Mon–Fri
       stop_cron  = "cron(0 17 ? * MON-FRI *)"  # 17:00 Mon–Fri
-      timezone   = "UTC"
+      timezone   = "BST"
     }
     "extended-hours" = {
       start_cron = "cron(0 7 ? * MON-FRI *)"   # 07:00 Mon–Fri
       stop_cron  = "cron(0 22 ? * MON-FRI *)"  # 22:00 Mon–Fri
-      timezone   = "UTC"
+      timezone   = "BST"
     }
     "weekdays-only" = {
       start_cron = "cron(0 8 ? * MON *)"        # 08:00 every Monday
       stop_cron  = "cron(0 23 ? * FRI *)"       # 23:00 every Friday
-      timezone   = "UTC"
+      timezone   = "BST"
     }
     "night-batch" = {
       start_cron = "cron(0 22 * * ? *)"         # 22:00 every day
       stop_cron  = "cron(0 6 * * ? *)"          # 06:00 every day
-      timezone   = "UTC"
+      timezone   = "BST"
     }
     "weekend-only" = {
       start_cron = "cron(0 8 ? * SAT *)"        # 08:00 every Saturday
       stop_cron  = "cron(0 23 ? * SUN *)"       # 23:00 every Sunday
-      timezone   = "UTC"
+      timezone   = "BST"
     }
   }
 }
