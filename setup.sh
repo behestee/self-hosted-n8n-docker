@@ -189,7 +189,7 @@ sudo systemctl enable nginx
 NGINX_MAIN="/etc/nginx/nginx.conf"
 if ! grep -q "n8n_limit" "$NGINX_MAIN"; then
     sudo sed -i \
-        's|http {|http {\n    limit_req_zone  $binary_remote_addr zone=n8n_limit:10m rate=10r/s;\n    limit_conn_zone $binary_remote_addr zone=conn_limit:10m;|' \
+        's|http {|http {\n    limit_req_zone  $binary_remote_addr zone=n8n_limit:10m rate=50r/s;\n    limit_conn_zone $binary_remote_addr zone=conn_limit:10m;|' \
         "$NGINX_MAIN"
     ok "Rate-limit zones added to $NGINX_MAIN"
 else
